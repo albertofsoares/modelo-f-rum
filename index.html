@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevCommunity | O Fórum dos Desenvolvedores</title>
+    
+    <!-- Fontes e Ícones -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <style>
+        /* Variáveis de Tema - Estilo Comunidade Moderna (Light Mode Limpo) */
+        :root {
+            --bg-body: #f3f4f6;
+            --bg-surface: #ffffff;
+            --primary: #3b82f6; /* Azul vibrante */
+            --primary-hover: #2563eb;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --tag-bg: #eff6ff;
+            --tag-text: #1d4ed8;
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- Navbar --- */
+        header {
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i { color: var(--primary); font-size: 2rem; }
+
+        .search-bar {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 40px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-body);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-bar input:focus {
+            border-color: var(--primary);
+            background-color: var(--bg-surface);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .nav-actions { display: flex; align-items: center; gap: 15px; }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        
+        .btn-outline { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background-color: var(--bg-body); }
+
+        /* --- Layout Principal --- */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 30px;
+        }
+
+        /* --- Sidebar Esquerda (Navegação) --- */
+        .sidebar-menu li { margin-bottom: 5px; }
+        .sidebar-menu a {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 15px; border-radius: 8px;
+            color: var(--text-muted); font-weight: 500;
+            transition: var(--transition);
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: var(--bg-surface);
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .sidebar-menu i { font-size: 1.2rem; }
+
+        .section-title {
+            font-size: 0.8rem; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--text-muted);
+            margin: 25px 0 10px 15px; font-weight: 700;
+        }
+
+        /* --- Feed Central (Tópicos) --- */
+        .feed-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
+        }
+        .feed-filters select {
+            padding: 8px 15px; border-radius: 6px; border: 1px solid var(--border-color);
+            background: var(--bg-surface); outline: none; font-weight: 500;
+        }
+
+        .topic-list { display: flex; flex-direction: column; gap: 15px; }
+
+        .topic-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            transition: var(--transition);
+        }
+
+        .topic-card:hover {
+            border-color: #d1d5db;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .topic-votes {
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            min-width: 50px;
+        }
+        .vote-btn {
+            background: none; border: none; font-size: 1.5rem; color: var(--text-muted);
+            cursor: pointer; transition: var(--transition);
+        }
+        .vote-btn:hover { color: var(--primary); }
+        .vote-count { font-weight: 700; color: var(--text-main); }
+
+        .topic-content { flex: 1; }
+        .topic-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 8px; color: var(--text-main); cursor: pointer; }
+        .topic-title:hover { color: var(--primary); }
+        
+        .topic-meta {
+            display: flex; align-items: center; gap: 15px;
+            font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;
+        }
+        .topic-author { display: flex; align-items: center; gap: 6px; font-weight: 500; color: var(--text-main); }
+        .avatar-small { width: 24px; height: 24px; border-radius: 50%; background-color: var(--border-color); }
+
+        .topic-tags { display: flex; gap: 10px; }
+        .tag {
+            background-color: var(--tag-bg); color: var(--tag-text);
+            padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+        }
+
+        .topic-stats {
+            display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+            color: var(--text-muted); font-size: 0.9rem; min-width: 80px;
+        }
+        .stat-item { display: flex; align-items: center; gap: 5px; }
+
+        /* --- Sidebar Direita (Estatísticas/Widgets) --- */
+        .widget {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .widget h3 { font-size: 1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .widget h3 i { color: var(--primary); }
+        
+        .trending-list li { margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .trending-list li:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+        .trending-title { font-weight: 500; font-size: 0.9rem; cursor: pointer; display: block; margin-bottom: 5px; }
+        .trending-title:hover { color: var(--primary); }
+
+        /* --- Modal de Novo Tópico --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: var(--transition);
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal {
+            background: var(--bg-surface); padding: 30px; border-radius: 12px;
+            width: 100%; max-width: 600px; transform: translateY(20px); transition: var(--transition);
+        }
+        .modal-overlay.active .modal { transform: translateY(0); }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 12px; border: 1px solid var(--border-color);
+            border-radius: 8px; outline: none; font-family: inherit;
+        }
+        .form-group textarea { resize: vertical; min-height: 150px; }
+        
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .container { grid-template-columns: 200px 1fr; }
+            .sidebar-right { display: none; }
+        }
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+            .sidebar-left { display: none; }
+            .search-bar { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <i class='bx bxs-planet'></i> DevCommunity
+            </div>
+            <div class="search-bar">
+                <i class='bx bx-search'></i>
+                <input type="text" placeholder="Pesquisar por tópicos, tags ou usuários...">
+            </div>
+            <div class="nav-actions">
+                <button class="btn btn-outline">Entrar</button>
+                <button class="btn btn-primary" id="btnNewTopic"><i class='bx bx-plus'></i> Novo Tópico</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Layout Principal -->
+    <div class="container">
+        
+        <!-- Coluna Esquerda: Navegação -->
+        <aside class="sidebar-left">
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active"><i class='bx bx-home-alt'></i> Início</a></li>
+                <li><a href="#"><i class='bx bx-trending-up'></i> Em Alta</a></li>
+                <li><a href="#"><i class='bx bx-star'></i> Favoritos</a></li>
+            </ul>
+
+            <div class="section-title">Categorias</div>
+            <ul class="sidebar-menu">
+                <li><a href="#"><span style="color: #ef4444;">●</span> Front-end</a></li>
+                <li><a href="#"><span style="color: #10b981;">●</span> Back-end</a></li>
+                <li><a href="#"><span style="color: #f59e0b;">●</span> Carreira & Vagas</a></li>
+                <li><a href="#"><span style="color: #8b5cf6;">●</span> Inteligência Artificial</a></li>
+                <li><a href="#"><span style="color: #6b7280;">●</span> Off-Topic</a></li>
+            </ul>
+        </aside>
+
+        <!-- Coluna Central: Feed de Tópicos -->
+        <main class="feed">
+            <div class="feed-header">
+                <h2>Tópicos Recentes</h2>
+                <div class="feed-filters">
+                    <select>
+                        <option>Mais Recentes</option>
+                        <option>Mais Votados</option>
+                        <option>Sem Resposta</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Onde os tópicos serão renderizados pelo JS -->
+            <div class="topic-list" id="topicList">
+                <!-- Tópicos mockados iniciais -->
+            </div>
+        </main>
+
+        <!-- Coluna Direita: Widgets -->
+        <aside class="sidebar-right">
+            <div class="widget">
+                <h3><i class='bx bx-bar-chart-alt-2'></i> Estatísticas</h3>
+                <ul style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.8;">
+                    <li><strong>12.450</strong> Membros</li>
+                    <li><strong>45.200</strong> Tópicos criados</li>
+                    <li><strong>320</strong> Online agora</li>
+                </ul>
+            </div>
+
+            <div class="widget">
+                <h3><i class='bx bxs-hot'></i> Tópicos em Alta</h3>
+                <ul class="trending-list">
+                    <li>
+                        <a href="#" class="trending-title">Qual a melhor stack para iniciar em 2026?</a>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">45 respostas</span>
+                    </li>
+                    <li>
+                        <a href="#" class="trending-title">Como a IA está mudando o mercado de trabalho local.</a>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">120 respostas</span>
+                    </li>
+                    <li>
+                        <a href="#" class="trending-title">Vagas remotas para o exterior: Dicas de currículo.</a>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">32 respostas</span>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Modal Novo Tópico -->
+    <div class="modal-overlay" id="topicModal">
+        <div class="modal">
+            <h2 style="margin-bottom: 20px;">Criar Novo Tópico</h2>
+            <form id="newTopicForm">
+                <div class="form-group">
+                    <label>Título do Tópico</label>
+                    <input type="text" id="postTitle" required placeholder="Seja claro e objetivo...">
+                </div>
+                <div class="form-group" style="display: flex; gap: 15px;">
+                    <div style="flex: 1;">
+                        <label>Categoria</label>
+                        <select id="postCategory">
+                            <option value="Front-end">Front-end</option>
+                            <option value="Back-end">Back-end</option>
+                            <option value="Carreira">Carreira & Vagas</option>
+                            <option value="Dúvida">Dúvida Geral</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Conteúdo</label>
+                    <textarea id="postContent" required placeholder="Descreva sua dúvida ou compartilhe seu conhecimento detalhadamente..."></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline" id="closeModalBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Publicar Tópico</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- Dados Simulados (Banco de Dados do Fórum) ---
+        const forumState = {
+            topics: [
+                {
+                    id: 1,
+                    title: "Como implementar autenticação JWT no Node.js de forma segura?",
+                    author: "CarlosDev99",
+                    time: "há 2 horas",
+                    category: "Back-end",
+                    votes: 24,
+                    replies: 5,
+                    views: 142
+                },
+                {
+                    id: 2,
+                    title: "Dica: Como usar CSS Grid para layouts complexos em 5 minutos",
+                    author: "Maria_UIUX",
+                    time: "há 5 horas",
+                    category: "Front-end",
+                    votes: 156,
+                    replies: 32,
+                    views: 1205
+                },
+                {
+                    id: 3,
+                    title: "Vale a pena aceitar proposta PJ para empresa de fora ganhando em Dólar?",
+                    author: "Senior_Anonymous",
+                    time: "há 1 dia",
+                    category: "Carreira",
+                    votes: 89,
+                    replies: 104,
+                    views: 3400
+                }
+            ]
+        };
+
+        const topicListElement = document.getElementById('topicList');
+
+        // --- Função para Renderizar o Feed ---
+        function renderFeed() {
+            topicListElement.innerHTML = ''; // Limpa o feed
+            
+            forumState.topics.forEach(topic => {
+                const topicHTML = `
+                    <div class="topic-card">
+                        <!-- Votos -->
+                        <div class="topic-votes">
+                            <button class="vote-btn" onclick="vote(${topic.id}, 1)"><i class='bx bx-upvote'></i></button>
+                            <span class="vote-count" id="vote-count-${topic.id}">${topic.votes}</span>
+                            <button class="vote-btn" onclick="vote(${topic.id}, -1)"><i class='bx bx-downvote'></i></button>
+                        </div>
+                        
+                        <!-- Conteúdo Principal -->
+                        <div class="topic-content">
+                            <h3 class="topic-title">${topic.title}</h3>
+                            <div class="topic-meta">
+                                <div class="topic-author">
+                                    <div class="avatar-small"></div>
+                                    ${topic.author}
+                                </div>
+                                <span>•</span>
+                                <span>${topic.time}</span>
+                            </div>
+                            <div class="topic-tags">
+                                <span class="tag">${topic.category}</span>
+                            </div>
+                        </div>
+
+                        <!-- Estatísticas do Tópico -->
+                        <div class="topic-stats">
+                            <div class="stat-item" title="Respostas"><i class='bx bx-message-rounded-dots'></i> ${topic.replies}</div>
+                            <div class="stat-item" title="Visualizações"><i class='bx bx-show' style="color: var(--text-muted)"></i> ${topic.views}</div>
+                        </div>
+                    </div>
+                `;
+                topicListElement.insertAdjacentHTML('beforeend', topicHTML);
+            });
+        }
+
+        // --- Lógica Interativa: Votação (Upvote/Downvote) ---
+        // Exposta globalmente para ser chamada pelo onclick no HTML
+        window.vote = function(id, value) {
+            const topic = forumState.topics.find(t => t.id === id);
+            if(topic) {
+                topic.votes += value;
+                document.getElementById(`vote-count-${id}`).innerText = topic.votes;
+                // Efeito visual de clique no botão poderia ser adicionado aqui
+            }
+        };
+
+        // --- Lógica do Modal para Criar Novo Tópico ---
+        const modal = document.getElementById('topicModal');
+        const btnNewTopic = document.getElementById('btnNewTopic');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const form = document.getElementById('newTopicForm');
+
+        btnNewTopic.addEventListener('click', () => modal.classList.add('active'));
+        closeModalBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('postTitle').value;
+            const category = document.getElementById('postCategory').value;
+            
+            const newTopic = {
+                id: Date.now(), // ID único baseado no timestamp
+                title: title,
+                author: "Você (Visitante)",
+                time: "Agora mesmo",
+                category: category,
+                votes: 1, // Começa com o seu próprio voto
+                replies: 0,
+                views: 1
+            };
+
+            // Adiciona no início do array
+            forumState.topics.unshift(newTopic);
+            
+            // Re-renderiza o feed com a nova postagem
+            renderFeed();
+            
+            // Fecha e limpa o formulário
+            form.reset();
+            modal.classList.remove('active');
+        });
+
+        // Inicializa a página
+        window.onload = () => {
+            renderFeed();
+        };
+    </script>
+</body>
+</html>
